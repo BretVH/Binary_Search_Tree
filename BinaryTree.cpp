@@ -21,17 +21,17 @@ using namespace std;
  * The sequence of complete binary trees looks like this:
  *
  *          1
- *      
  *
- *          1       1     
- *         /       / \   
- *        2       2   3  
- *                           
- *			     
- *          1                 1                 1                 1        
- *        /   \             /   \    	      /   \             /   \    
- *      2       3         2       3  	    2       3         2       3  
- *     /                 / \         	   / \     /   	     / \     / \ 
+ *
+ *          1       1
+ *         /       / \
+ *        2       2   3
+ *
+ *
+ *          1                 1                 1                 1
+ *        /   \             /   \    	      /   \             /   \
+ *      2       3         2       3  	    2       3         2       3
+ *     /                 / \         	   / \     /   	     / \     / \
  *    4                 4   5        	  4   5   6    	    4   5   6   7
  *
  *
@@ -43,7 +43,7 @@ using namespace std;
  *          /   \                +---+---+---+---+---+---+---+---+- -
  *        2       3        -->   | X | 1 | 2 | 3 | 4 | 5 | 6 | 7 |
  *       / \     / \             +---+---+---+---+---+---+---+---+- -
- *      4   5   6   7              0   1   2   3   4   5   6   7   
+ *      4   5   6   7              0   1   2   3   4   5   6   7
  *
  * For computational convenience, the root element is stored at index 1
  * in the array (the cell at index 0 is unused).  In this arrangement
@@ -67,57 +67,55 @@ using namespace std;
 
 
 
-/****************************************************************************/
-/***                    Implementation of BinaryTree			  ***/
-/****************************************************************************/
+ /****************************************************************************/
+ /***                    Implementation of BinaryTree			  ***/
+ /****************************************************************************/
 
 
-/****************/
-/* Construction */
-/****************/
+ /****************/
+ /* Construction */
+ /****************/
 
 template<class T>
-BinaryTree<T>::BinaryTree( T *elements, int n_elements )
-  // Constructs this tree to have elements 'elements[1]', 'elements[2]' ...
-  // as a complete binary tree (see above); 'element[0]' is ignored,
-  // so the total number of cells if 'elements' is 'n_elements + 1'
+BinaryTree<T>::BinaryTree(T *elements, int n_elements)
+// Constructs this tree to have elements 'elements[1]', 'elements[2]' ...
+// as a complete binary tree (see above); 'element[0]' is ignored,
+// so the total number of cells if 'elements' is 'n_elements + 1'
 {
-  root = NULL;
-  init_complete(elements, n_elements);
+	root = NULL;
+	init_complete(elements, n_elements);
 }
 
 template<class T>
-BinaryTree<T>::BinaryTree( const BinaryTree& src )
+BinaryTree<T>::BinaryTree(const BinaryTree& src)
 {
-  root = clone(src.root);
+	root = clone(src.root);
 }
 
 template<class T>
-void BinaryTree<T>::init_complete( T *elements, int n_elements )
-  // Initializes this tree, regarding it as a complete binary tree
-  // having elements 'elements[1]', 'elements[2]', ... (see above)
+void BinaryTree<T>::init_complete(T *elements, int n_elements)
+// Initializes this tree, regarding it as a complete binary tree
+// having elements 'elements[1]', 'elements[2]', ... (see above)
 {
-  // call the helper function starting at the root index (1)
-  root = init_complete(elements, n_elements, 1);
+	// call the helper function starting at the root index (1)
+	root = init_complete(elements, n_elements, 1);
 }
 
 template<class T>
-BTNode<T>* BinaryTree<T>::init_complete( T *elements, int n_elements,
-					 int index )
-  // Initializes this tree, regarding it as a complete binary tree,
-  // starting at the array node at 'index'
+BTNode<T>* BinaryTree<T>::init_complete(T *elements, int n_elements,
+	int index)
+	// Initializes this tree, regarding it as a complete binary tree,
+	// starting at the array node at 'index'
 {
-  // check for the end of the array 
-  if (index > n_elements)
-    return NULL;
+	// check for the end of the array 
+	if (index > n_elements)
+		return NULL;
 
-  // create a new node, with left and right children assigned by
-  // the recursive call
-  return new BTNode<T>(elements[index],
-		       init_complete(elements, n_elements, 4*index),
-		       init_complete(elements, n_elements, 4*index + 1),
-			init_complete(elements, n_elements, 4*index+2),
-			init_complete(elements, n_elements, 4*index+3));
+	// create a new node, with left and right children assigned by
+	// the recursive call
+	return new BTNode<T>(elements[index],
+		init_complete(elements, n_elements, 2 * index),
+		init_complete(elements, n_elements, 2 * index + 1));
 }
 
 
@@ -126,90 +124,96 @@ BTNode<T>* BinaryTree<T>::init_complete( T *elements, int n_elements,
 /* Access and Tests */
 /********************/
 template<class T>
-BTNode<T>* BinaryTree<T>::clone( BTNode<T> *node )
+BTNode<T>* BinaryTree<T>::clone(BTNode<T> *node)
 {
-  if (node == NULL)
-  {
-     return NULL;
-  }
-  BTNode<T>* myNode = new BTNode<T>(*node);
-  myNode->left = clone(myNode->left);
-  myNode->right = clone(myNode->right);
-  return myNode;
+	if (node == NULL)
+	{
+		return NULL;
+	}
+	BTNode<T>* myNode = new BTNode<T>(*node);
+	myNode->left = clone(myNode->left);
+	myNode->right = clone(myNode->right);
+	return myNode;
 }
 
 template<class T>
 bool BinaryTree<T>::is_empty() const
 {
-   return this->root == NULL;
+	return this->root == NULL;
 }
 
 template<class T>
-BTNode<T>* BinaryTree<T>::get_parent( BTNode<T>* node )
+BTNode<T>* BinaryTree<T>::get_parent(BTNode<T>* node)
 {
-   return get_parent( node, root );
+	return get_parent(node, root);
 }
 
 template<class T>
-BTNode<T>* BinaryTree<T>::get_parent( BTNode<T>* node, BTNode<T>* curr )
+BTNode<T>* BinaryTree<T>::get_parent(BTNode<T>* node, BTNode<T>* curr)
 {
-   if( curr == NULL )
-   {
-      return NULL;
-   }
-   if ( node == NULL )
-   {
-      return NULL;
-   }
-   else if(  curr->left == node )
-   {
-	return curr;
-   }
-   else if( curr->right == node )
-   {
-	return curr;
-   }
-   get_parent(node, curr->right );
-   get_parent(node, curr->left );
+	if (curr == NULL)
+	{
+		return NULL;
+	}
+	if (node == NULL)
+	{
+		return NULL;
+	}
+	else if (curr->left == node)
+	{
+		return curr;
+	}
+	else if (curr->right == node)
+	{
+		return curr;
+	}
+	curr = get_parent(node, curr->right);
+	if (curr->left == node || curr->right == node) {
+		return curr;
+	}
+	curr = get_parent(node, curr->left);
+	if (curr->left == node || curr->right == node) {
+		return curr;
+	}
 }
 
 template<class T>
-int BinaryTree<T>::node_count( BTNode<T> *node ) const
+int BinaryTree<T>::node_count(BTNode<T> *node) const
 {
-  if (node == NULL)
-    return 0;
-  return 1 + node_count(node->left) + node_count(node->right);
+	if (node == NULL)
+		return 0;
+	return 1 + node_count(node->left) + node_count(node->right);
 }
 
 template<class T>
-int BinaryTree<T>::leaf_count( BTNode<T> *node ) const
+int BinaryTree<T>::leaf_count(BTNode<T> *node) const
 {
-   if (node == NULL)       
-	 return 0;
-   if (node->left == NULL && node->right==NULL)      
-    return 1;            
-   else
-    return leaf_count(node->left)+
-          leaf_count(node->right); 
+	if (node == NULL)
+		return 0;
+	if (node->left == NULL && node->right == NULL)
+		return 1;
+	else
+		return leaf_count(node->left) +
+		leaf_count(node->right);
 
 }
 
 template<class T>
-int BinaryTree<T>::height( BTNode<T> *node ) const
+int BinaryTree<T>::height(BTNode<T> *node) const
 {
-	if (node==NULL) 
-       return 0;
-   else
-   {
-       /* compute the depth of each subtree */
-       int lDepth = height(node->left);
-       int rDepth = height(node->right);
- 
-       /* use the larger one */
-       if (lDepth > rDepth) 
-           return(lDepth+1);
-       else return(rDepth+1);
-   }
+	if (node == NULL)
+		return 0;
+	else
+	{
+		/* compute the depth of each subtree */
+		int lDepth = height(node->left);
+		int rDepth = height(node->right);
+
+		/* use the larger one */
+		if (lDepth > rDepth)
+			return(lDepth + 1);
+		else return(rDepth + 1);
+	}
 }
 
 /*************/
@@ -217,34 +221,34 @@ int BinaryTree<T>::height( BTNode<T> *node ) const
 /*************/
 
 template<class T>
-void BinaryTree<T>::preorder( void (*f)(const T&), BTNode<T> *node ) const
+void BinaryTree<T>::preorder(void(*f)(const T&), BTNode<T> *node) const
 {
-  if (!node)
-    return;
-  f(node->elem);
-  preorder(f, node->left);
-  preorder(f, node->right);
+	if (!node)
+		return;
+	f(node->elem);
+	preorder(f, node->left);
+	preorder(f, node->right);
 }
 
 template<class T>
-void BinaryTree<T>::inorder( void (*f)(const T&), BTNode<T> *node ) const
+void BinaryTree<T>::inorder(void(*f)(const T&), BTNode<T> *node) const
 {
-  if (!node)
-    return;
-  inorder(f, node->left);
-  f(node->elem);
-  inorder(f, node->right);
+	if (!node)
+		return;
+	inorder(f, node->left);
+	f(node->elem);
+	inorder(f, node->right);
 }
-  
+
 
 template<class T>
-void BinaryTree<T>::postorder( void (*f)(const T&), BTNode<T> *node ) const
+void BinaryTree<T>::postorder(void(*f)(const T&), BTNode<T> *node) const
 {
-  if (!node)
-    return;
-  postorder(f, node->left);
-  postorder(f, node->right);
-  f(node->elem);
+	if (!node)
+		return;
+	postorder(f, node->left);
+	postorder(f, node->right);
+	f(node->elem);
 }
 
 
@@ -255,63 +259,63 @@ void BinaryTree<T>::postorder( void (*f)(const T&), BTNode<T> *node ) const
 /************************/
 
 template<class T>
-int BinaryTree<T>::to_flat_array( T *elements, int max ) const
-  // PRE: This is a complete binary tree
-  // Copies the elements contained in the nodes of this tree to
-  // 'elements' in complete-tree order (see above).  At most
-  // 'max' elements are actually copied; the return value is
-  // the total number of nodes.
-  // The elements are copied starting at 'elements[1]' (see above)
-  // so 'elements' must have at least 'max + 1' cells available
+int BinaryTree<T>::to_flat_array(T *elements, int max) const
+// PRE: This is a complete binary tree
+// Copies the elements contained in the nodes of this tree to
+// 'elements' in complete-tree order (see above).  At most
+// 'max' elements are actually copied; the return value is
+// the total number of nodes.
+// The elements are copied starting at 'elements[1]' (see above)
+// so 'elements' must have at least 'max + 1' cells available
 {
-  // call the helper
-  int max_index = 1;
-  return to_flat_array(elements, max, root, 1, max_index);
+	// call the helper
+	int max_index = 1;
+	return to_flat_array(elements, max, root, 1, max_index);
 }
 
 template<class T>
-int BinaryTree<T>::to_flat_array( T *elements, int max, BTNode<T> *node,
-				  int index, int& max_index ) const
-  // PRE: this is a complete binary tree
-  // Helper function for the 'to_flat_array' function above
-  // 'node' is the current node, 'index' is the index of the node
-  // in the flat array (complete tree array) representation, and
-  // 'max_index' is the largest index yet encountered; it is updated
-  // accordingly by this call
-  
+int BinaryTree<T>::to_flat_array(T *elements, int max, BTNode<T> *node,
+	int index, int& max_index) const
+	// PRE: this is a complete binary tree
+	// Helper function for the 'to_flat_array' function above
+	// 'node' is the current node, 'index' is the index of the node
+	// in the flat array (complete tree array) representation, and
+	// 'max_index' is the largest index yet encountered; it is updated
+	// accordingly by this call
+
 {
-  // skip a NULL node
-  if (node == NULL)
-    return 0;
+	// skip a NULL node
+	if (node == NULL)
+		return 0;
 
-  // update the maximum index
-  if (index > max_index)
-    max_index = index;
+	// update the maximum index
+	if (index > max_index)
+		max_index = index;
 
-  // as long as we're not past the maximum number of cells,
-  // (and the node is not NULL) the code can be copied
-  if (index < max)
-    elements[index] = node->elem;
+	// as long as we're not past the maximum number of cells,
+	// (and the node is not NULL) the code can be copied
+	if (index < max)
+		elements[index] = node->elem;
 
-  // make a recursive call, even if we're already past the max
-  // (in order to keep the 'max_index' updated)
-  to_flat_array(elements, max, node->left, 2*index, max_index);
-  to_flat_array(elements, max, node->right, 2*index + 1, max_index);
+	// make a recursive call, even if we're already past the max
+	// (in order to keep the 'max_index' updated)
+	to_flat_array(elements, max, node->left, 2 * index, max_index);
+	to_flat_array(elements, max, node->right, 2 * index + 1, max_index);
 
-  return max_index;
+	return max_index;
 }
 /**************************/
 /*		Mutators		  */
 /**************************/
 template<class T>
-void BinaryTree<T>::empty( BTNode<T>* node )
+void BinaryTree<T>::empty(BTNode<T>* node)
 {
-  if (!node)
-    return;
-  empty(node->left);
-  empty(node->right);
-  delete node;
-  node = NULL;
+	if (!node)
+		return;
+	empty(node->left);
+	empty(node->right);
+	delete node;
+	node = NULL;
 }
 
 /**************************/
@@ -319,40 +323,40 @@ void BinaryTree<T>::empty( BTNode<T>* node )
 /**************************/
 
 template<class T>
-bool BinaryTree<T>::operator==( const BinaryTree& src ) const
+bool BinaryTree<T>::operator==(const BinaryTree& src) const
 {
-   return equals(root, src.root);
+	return equals(root, src.root);
 }
 
 template<class T>
-bool equals( BTNode<T>* rhs, BTNode<T>* lhs )
+bool equals(BTNode<T>* rhs, BTNode<T>* lhs)
 {
-  if (rhs == NULL)
-  {
-    return lhs == NULL;
-  }
-  if (lhs->elem == rhs->elem)
-  {
-    return true;
-  }
-  if (equals(rhs->left, lhs->left) && equals(rhs->right, lhs->right))
-  {
-    return true;
-  }
-  return false; 
+	if (rhs == NULL)
+	{
+		return lhs == NULL;
+	}
+	if (lhs->elem == rhs->elem)
+	{
+		return true;
+	}
+	if (equals(rhs->left, lhs->left) && equals(rhs->right, lhs->right))
+	{
+		return true;
+	}
+	return false;
 }
 
 template<class T>
-bool BinaryTree<T>::operator!=( const BinaryTree& src ) const
+bool BinaryTree<T>::operator!=(const BinaryTree& src) const
 {
 	return !(*this == src);
 }
 
 template<class T>
-BinaryTree<T>& BinaryTree<T>::operator=( const BinaryTree& src )
+BinaryTree<T>& BinaryTree<T>::operator=(const BinaryTree& src)
 {
-   root = clone(src.root);
-   return *this; 
+	root = clone(src.root);
+	return *this;
 }
 
 /**************************/
@@ -360,31 +364,29 @@ BinaryTree<T>& BinaryTree<T>::operator=( const BinaryTree& src )
 /**************************/
 
 template<class T>
-ostream& operator<<( ostream& out, const BinaryTree<T>& src )
-  // Writes the elements contained in the nodes of this tree,
-  // by way of an inorder traversal
+ostream& operator<<(ostream& out, const BinaryTree<T>& src)
+// Writes the elements contained in the nodes of this tree,
+// by way of an inorder traversal
 {
-  // make a call to the recursive helper function
-  out << src.root;
-  return out;
+	// make a call to the recursive helper function
+	out << src.root;
+	return out;
 }
 
 template<class T>
-ostream& operator<<( ostream& out, const BTNode<T>* node )
-  // Helper for the 'operator<<' above
-{  
-  // don't write a NULL node
-  if (!node)
-    return out;
-  
-  // write, using an inorder traversal  
-  out << node->left;  // (recursive)
-  out << node->elem;  // (nonrecursive)
-  out << " ";
-  out << node->right; // (recursive)
-  out << node->middle;
-  out << node->super;
-  return out;
+ostream& operator<<(ostream& out, const BTNode<T>* node)
+// Helper for the 'operator<<' above
+{
+	// don't write a NULL node
+	if (!node)
+		return out;
+
+	// write, using an inorder traversal  
+	out << node->left;  // (recursive)
+	out << node->elem;  // (nonrecursive)
+	out << " ";
+	out << node->right; // (recursive)
+	return out;
 }
 
 /***********/
@@ -398,69 +400,69 @@ static const double node_box_margin = 6;
 static const double node_box_r = 6;
 
 template<class T>
-void BinaryTree<T>::display( PDF *pdf, const string& annotation ) const
+void BinaryTree<T>::display(PDF *pdf, const string& annotation) const
 {
-  double scale = 1;
+	double scale = 1;
 
-  // the overall scale is based on the height of the tree
-  int h = height();
-  if (h >= 4) 
-    scale = 16.0/double(1<<h);
+	// the overall scale is based on the height of the tree
+	int h = height();
+	if (h >= 4)
+		scale = 16.0 / double(1 << h);
 
-  // start a new page
-  pdf->new_page(annotation.c_str());
-  
-  // regardless of the scale, place the root node at the center
-  // of the page, one inch below the top margin
-  double x = pdf->get_width()/2;
-  double y = pdf->get_height() - 72;
+	// start a new page
+	pdf->new_page(annotation.c_str());
 
-  // set the font to Helvetica, 12 point (times the scale)
-  pdf->selectfont(Helvetica, font_scale*scale);
-  // set the non-stroke color to light gray
-  pdf->setcolor_nonstroke(PDFColor(0.75));
-  pdf->setlinewidth(scale);
+	// regardless of the scale, place the root node at the center
+	// of the page, one inch below the top margin
+	double x = pdf->get_width() / 2;
+	double y = pdf->get_height() - 72;
 
-  // run the "helper"
-  display(pdf, root, h - 1, x, y, scale);
+	// set the font to Helvetica, 12 point (times the scale)
+	pdf->selectfont(Helvetica, font_scale*scale);
+	// set the non-stroke color to light gray
+	pdf->setcolor_nonstroke(PDFColor(0.75));
+	pdf->setlinewidth(scale);
+
+	// run the "helper"
+	display(pdf, root, h - 1, x, y, scale);
 }
 
 template<class T>
-void BinaryTree<T>::display( PDF *pdf, BTNode<T> *node, int leaf_dist,
-			     double x, double y, double scale ) const
+void BinaryTree<T>::display(PDF *pdf, BTNode<T> *node, int leaf_dist,
+	double x, double y, double scale) const
 {
-  // don't draw a NULL node
-  if (node == NULL)
-    return;
+	// don't draw a NULL node
+	if (node == NULL)
+		return;
 
-  // if there is a left node, add a line to it and make a recursive call
-  if (node->left) {
-    double x_left = x - (1<<leaf_dist)*node_sep*scale/2;
-    double y_left = y - level_sep*scale;
-    pdf->moveto(x, y);
-    pdf->lineto(x_left, y_left);
-    pdf->stroke();
-    display(pdf, node->left, leaf_dist - 1, x_left, y_left, scale);
-  }
+	// if there is a left node, add a line to it and make a recursive call
+	if (node->left) {
+		double x_left = x - (1 << leaf_dist)*node_sep*scale / 2;
+		double y_left = y - level_sep*scale;
+		pdf->moveto(x, y);
+		pdf->lineto(x_left, y_left);
+		pdf->stroke();
+		display(pdf, node->left, leaf_dist - 1, x_left, y_left, scale);
+	}
 
-  // if there is a right node, add a line to it and make a recursive call
-  if (node->right) {
-    double x_right = x + (1<<leaf_dist)*node_sep*scale/2;
-    double y_right = y - level_sep*scale;
-    pdf->moveto(x, y);
-    pdf->lineto(x_right, y_right);
-    pdf->stroke();    
-    display(pdf, node->right, leaf_dist - 1, x_right, y_right, scale);
-  }
+	// if there is a right node, add a line to it and make a recursive call
+	if (node->right) {
+		double x_right = x + (1 << leaf_dist)*node_sep*scale / 2;
+		double y_right = y - level_sep*scale;
+		pdf->moveto(x, y);
+		pdf->lineto(x_right, y_right);
+		pdf->stroke();
+		display(pdf, node->right, leaf_dist - 1, x_right, y_right, scale);
+	}
 
-  // Now draw 'node' at (x, y)
-  // This is done last so that the box covers the line
-  // A text representation is obtained by converting the element to a
-  // C-style stringusing an 'ostringstream' instance
-  ostringstream str;
-  str << node->elem;
-  pdf->text_box(str.str().c_str(), x, y,
+	// Now draw 'node' at (x, y)
+	// This is done last so that the box covers the line
+	// A text representation is obtained by converting the element to a
+	// C-style stringusing an 'ostringstream' instance
+	ostringstream str;
+	str << node->elem;
+	pdf->text_box(str.str().c_str(), x, y,
 		scale*node_box_margin, scale*node_box_r,
-		0, scale*font_scale);  
+		0, scale*font_scale);
 }
 
